@@ -1,4 +1,3 @@
-```markdown
 # Daily Delhi Climate - Temperature Forecasting Pipeline
 
 **Group 2:** Paulette Dushime | Mahe Digne | Samuel Gakuru Wanjohi  
@@ -109,5 +108,3 @@ This script will fetch the latest data from the API, process the 11 required wea
 * **Paulette Dushime:** Designed the MySQL and MongoDB database structures, wrote the SQL/NoSQL queries, created the Task 4 automated prediction script, and wrote the project documentation (README).
 * **Mahe Digne:** Handled the Machine Learning. Explored the data, answered the 5 analytical questions, performed feature engineering, and trained/exported the final Random Forest prediction model.
 * **Samuel Gakuru Wanjohi:** Built the FastAPI integration. Wrote the web server code, connected the Python app to both databases, created the CRUD and time-series endpoints, and managed the GitHub repository setup.
-
-```
