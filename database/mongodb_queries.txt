@@ -1,0 +1,37 @@
+
+// MONGODB COLLECTION DESIGN (NoSQL)
+// Database: assignment_db
+// Collection: climate_records
+
+// SAMPLE NESTED DOCUMENT
+{
+  "_id": { "$oid": "69a9714a2105e6142557f0a1" },
+  "date": "2013-01-02",
+  "location": {
+    "station_name": "Central Agricultural Hub",
+    "city": "Delhi"
+  },
+  "metrics": {
+    "mean_temp": 7.4,
+    "humidity": 92.0,
+    "wind_speed": 2.98
+  }
+}
+
+// 3 REQUIRED MONGODB QUERIES (Task 2)
+// Executed via MongoDB Atlas UI Filters
+
+// Query 1 — Find the latest weather record
+// UI Method: Left Filter empty {}, applied Sort {"date": -1}, Limit 1.
+// Equivalent Mongo Shell Syntax:
+db.climate_records.find({}).sort({"date": -1}).limit(1)
+
+// Query 2 — Date range query (First two days of Jan 2013)
+// UI Method: Applied Filter {"date": { "$gte": "2013-01-01", "$lte": "2013-01-02" }}
+// Equivalent Mongo Shell Syntax:
+db.climate_records.find({"date": { "$gte": "2013-01-01", "$lte": "2013-01-02" }})
+
+// Query 3 — Querying Nested Data (Humidity > 90%)
+// UI Method: Applied Filter {"metrics.humidity": { "$gt": 90 }}
+// Equivalent Mongo Shell Syntax:
+db.climate_records.find({"metrics.humidity": { "$gt": 90 }})
