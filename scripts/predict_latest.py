@@ -2,13 +2,15 @@ import requests
 import pandas as pd
 import pickle
 import datetime
+import warnings
+warnings.filterwarnings("ignore")
 
 print("  DELHI DAILY TEMPERATURE FORECAST PIPELINE")
 
 # STEP 1: LOAD MODEL
 print("[Step 1] Loading model artifacts...")
 try:
-    with open('best_model.pkl', 'rb') as f:
+    with open('models/best_model.pkl', 'rb') as f:
         model = pickle.load(f)
     print("  Model: RandomForestRegressor loaded successfully.")
 except Exception as e:
