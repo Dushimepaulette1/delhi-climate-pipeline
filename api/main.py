@@ -1,4 +1,4 @@
-mport pickle
+import pickle
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -17,3 +17,10 @@ def get_mysql_connection():
         database='assignment_db',
         cursorclass=pymysql.cursors.DictCursor
     )
+
+MONGO_URI = "mongodb+srv://dushime:Dushimepaulette@cluster0.gbi3qsl.mongodb.net/assignment_db?retryWrites=true&w=majority"
+mongo_client = MongoClient(MONGO_URI)
+mongo_db = mongo_client["assignment_db"]
+mongo_collection = mongo_db["climate_records"]
+
+# DATA MODELS
