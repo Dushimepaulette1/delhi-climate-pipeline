@@ -1,0 +1,22 @@
+{
+  "model_type": "RandomForestRegressor",
+  "features": [
+    "month",
+    "day_of_year",
+    "day_of_week",
+    "humidity",
+    "wind_speed",
+    "meanpressure",
+    "lag_1d",
+    "lag_7d",
+    "lag_30d",
+    "ma_7d",
+    "ma_30d"
+  ],
+  "target": "meantemp",
+  "r2": 0.9534,
+  "mae": 1.064,
+  "rmse": 1.406,
+  "train_period": "2013-01-31 to 2016-06-19",
+  "test_period": "2016-06-20 to 2017-04-24"
+}
