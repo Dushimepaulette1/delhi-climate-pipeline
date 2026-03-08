@@ -120,3 +120,84 @@ def get_mysql_latest():
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM Daily_Climate ORDER BY record_date DESC LIMIT 1")
+            record = cursor.fetchone()
+            if record:
+                record['record_date'] = str(record['record_date'])
+            return record
+    finally:
+        connection.close()
+
+@app.get("/api/mysql/range")
+def get_mysql_range(start_date: str, end_date: str):
+    connection = get_mysql_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM Daily_Climate WHERE record_date BETWEEN %s AND %s ORDER BY record_date"
+            cursor.execute(sql, (start_date, end_date))
+            records = cursor.fetchall()
+            for r in records:
+                r['record_date'] = str(r['record_date'])
+            return records
+    finally:
+        connection.close()
+
+# MongoDB ENDPOINTS (CRUD + Time Series)
+
+@app.post("/api/mongodb/records")
+def add_mongo_record(record: dict):
+    mongo_collection.insert_one(record)
+    return {"message": "Record added successfully to MongoDB!"}
+
+@app.get("/api/mongodb/records")
+def get_mongo_records():
+    records = list(mongo_collection.find({}, {"_id": 0}))
+    return records
+
+@app.put("/api/mongodb/records/{date}")
+def update_mongo_record(date: str, record: dict):
+    record.pop("_id", None) # Remove ID if present to prevent MongoDB immutable errors
+    mongo_collection.update_one({"date": date}, {"$set": record})
+    return {"message": f"Record for {date} updated successfully in MongoDB!"}
+
+@app.delete("/api/mongodb/records/{date}")
+def delete_mongo_record(date: str):
+    mongo_collection.delete_one({"date": date})
+    return {"message": f"Record for {date} deleted successfully from MongoDB!"}
+
+@app.get("/api/mongodb/latest")
+def get_mongo_latest():
+    # Sort by date descending and limit to 1
+    record = mongo_collection.find_one({}, sort=[("date", -1)], projection={"_id": 0})
+    return record
+
+@app.get("/api/mongodb/range")
+def get_mongo_range(start_date: str, end_date: str):
+    records = list(mongo_collection.find(
+        {"date": {"$gte": start_date, "$lte": end_date}},
+        {"_id": 0}
+    ).sort("date", 1))
+    return records
+
+# PREDICTION ENDPOINT (TASK 4)
+
+@app.post("/api/predict")
+def predict_tomorrow(data: WeatherInput):
+    if model is None:
+        raise HTTPException(status_code=500, detail="AI Model is not loaded. Check if best_model.pkl is in the directory.")
+
+    # Convert incoming JSON into a Pandas DataFrame
+    input_data = pd.DataFrame([data.model_dump()])
+
+    # Ensure exact column order for the model
+    features = ['month', 'day_of_year', 'day_of_week', 'humidity', 'wind_speed', 'meanpressure',
+                'lag_1d', 'lag_7d', 'lag_30d', 'ma_7d', 'ma_30d']
+    input_data = input_data[features]
+
+    # Make prediction
+    prediction = model.predict(input_data)
+
+    return {
+        "message": "Prediction successful",
+        "predicted_tomorrow_temp": round(float(prediction[0]), 2),
+        "model_used": "RandomForestRegressor"
+    }
